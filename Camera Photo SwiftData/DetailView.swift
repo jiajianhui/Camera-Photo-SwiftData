@@ -30,6 +30,8 @@ struct DetailView: View {
                     .overlay {
                         if let image = sample.image {
                             Image(uiImage: image)
+                                .resizable()
+                                .scaledToFill()
                         } else {
                             Image(systemName: "photo")
                                 .resizable()
@@ -53,9 +55,7 @@ struct DetailView: View {
                     } label: {
                         Text("编辑")
                     }
-                    .sheet(item: $sheetType) { sheet in
-                        sheet
-                    }
+                    .sheet(item: $sheetType) { $0 }
                     
                     Button(role: .destructive) {
                         context.delete(sample)

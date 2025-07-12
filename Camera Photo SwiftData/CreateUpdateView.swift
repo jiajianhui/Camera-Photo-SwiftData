@@ -16,8 +16,6 @@ struct CreateUpdateView: View {
     
     @State var vm: CreateEditViewModel
     
-    @State private var imagePicker = ImagePicker()
-    
     var body: some View {
         NavigationStack {
             Form {
@@ -26,7 +24,7 @@ struct CreateUpdateView: View {
                 VStack {
                     if vm.data != nil {
                         Button("Clear Image") {
-                            vm.data = nil
+                            vm.clearImage()
                         }
                     }
                     
@@ -34,7 +32,7 @@ struct CreateUpdateView: View {
                         Button("Camera", systemImage: "camera") {
                             
                         }
-                        PhotosPicker(selection: $imagePicker.imageSelection) {
+                        PhotosPicker(selection: $vm.imageSelection) {
                             Label("Photos", systemImage: "photo")
                         }
                         
@@ -47,9 +45,6 @@ struct CreateUpdateView: View {
                         .scaledToFit()
                 }
             }
-            .onAppear {
-                imagePicker.setup(vm)
-            }
             
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -60,30 +55,23 @@ struct CreateUpdateView: View {
                 
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        if vm.isUpdating {
-                            
-                            // Update
-                            if let sample = vm.sample {
-                                if vm.image != UIImage() {
-                                    sample.data = vm.image.jpegData(compressionQuality: 0.7)
-                                } else {
-                                    sample.data = nil
-                                }
-                                sample.name = vm.name
-                                dismiss()
-                            }
+                        let imageData = vm.image != UIImage() ? vm.image.jpegData(compressionQuality: 0.7) : nil
+                        
+                        if vm.isUpdating, let sample = vm.sample {
+                            // 更新
+                            sample.name = vm.name
+                            sample.data = imageData
                         } else {
-                            
-                            // Add
+                            // 新建
                             let newSample = SampleModel(name: vm.name)
-                            if vm.image != UIImage() {
-                                newSample.data = vm.image.jpegData(compressionQuality: 0.7)
-                            } else {
-                                newSample.data = nil
-                            }
+                            newSample.data = imageData
                             context.insert(newSample)
-                            dismiss()
                         }
+                        
+                        // 保存、关闭sheet
+                        try? context.save()
+                        dismiss()
+                        
                     } label: {
                         Text(vm.isUpdating ? "Update" : "Add")
                     }

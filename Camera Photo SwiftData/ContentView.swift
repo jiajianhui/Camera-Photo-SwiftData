@@ -34,6 +34,8 @@ struct ContentView: View {
                                 .overlay {
                                     if let image = sample.image {
                                         Image(uiImage: image)
+                                            .resizable()
+                                            .scaledToFill()
                                     } else {
                                         Image(systemName: "photo")
                                             
@@ -83,9 +85,7 @@ struct ContentView: View {
                     } label: {
                         Image(systemName: "plus")
                     }
-                    .sheet(item: $sheetType) { sheet in
-                        sheet
-                    }
+                    .sheet(item: $sheetType) { $0 }
 
                 }
             }
