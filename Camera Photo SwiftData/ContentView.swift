@@ -15,6 +15,8 @@ struct ContentView: View {
     
     @Environment(\.modelContext) private var context
     
+    @State private var sheetType: SheetType?
+    
     var body: some View {
         NavigationStack {
             
@@ -77,9 +79,12 @@ struct ContentView: View {
             .toolbar {
                 ToolbarItem {
                     Button {
-                        
+                        sheetType = .new
                     } label: {
                         Image(systemName: "plus")
+                    }
+                    .sheet(item: $sheetType) { sheet in
+                        sheet
                     }
 
                 }

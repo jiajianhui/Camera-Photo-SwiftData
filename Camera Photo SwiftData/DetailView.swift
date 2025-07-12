@@ -15,6 +15,8 @@ struct DetailView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
     
+    @State private var sheetType: SheetType?
+    
     var body: some View {
         ScrollView {
             VStack {
@@ -47,10 +49,14 @@ struct DetailView: View {
                 // btns
                 HStack(spacing:40) {
                     Button {
-                        
+                        sheetType = .update(sample)
                     } label: {
                         Text("编辑")
                     }
+                    .sheet(item: $sheetType) { sheet in
+                        sheet
+                    }
+                    
                     Button(role: .destructive) {
                         context.delete(sample)
                         try? context.save()
