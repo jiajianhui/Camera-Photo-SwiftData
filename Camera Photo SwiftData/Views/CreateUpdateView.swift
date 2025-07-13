@@ -16,6 +16,11 @@ struct CreateUpdateView: View {
     
     @State var vm: CreateEditViewModel
     
+    // 展示相机
+    @State private var showCamera = false
+    // 相机权限错误
+    @State private var cameraError: CameraPermission.CameraError?
+    
     var body: some View {
         NavigationStack {
             Form {
@@ -29,9 +34,34 @@ struct CreateUpdateView: View {
                     }
                     
                     HStack {
+                        
+                        // 相机按钮
                         Button("Camera", systemImage: "camera") {
+                            // 检查权限
+                            if let error = CameraPermission.checkPermission() {
+                                cameraError = error
+                            } else {
+                                showCamera.toggle()
+                            }
                             
                         }
+                        // 错误信息
+                        .alert(isPresented: .constant(cameraError != nil), error: cameraError) { _ in
+                            Button("OK") {
+                                cameraError = nil
+                            }
+                        } message: { error in
+                            Text(error.recoverySuggestion ?? "请再次尝试")
+                        }
+                        // 相机界面
+                        .sheet(isPresented: $showCamera) {
+                            UIKitCamera(selectedImage: $vm.cameraImage)
+                                .ignoresSafeArea()
+                        }
+
+                        
+                        
+                        // 图库按钮
                         PhotosPicker(selection: $vm.imageSelection) {
                             Label("Photos", systemImage: "photo")
                         }
@@ -43,6 +73,12 @@ struct CreateUpdateView: View {
                     Image(uiImage: vm.image)
                         .resizable()
                         .scaledToFit()
+                }
+            }
+            // 监测是否拍照
+            .onChange(of: vm.cameraImage) {
+                if let image = vm.cameraImage {
+                    vm.data = image.jpegData(compressionQuality: 0.8)
                 }
             }
             

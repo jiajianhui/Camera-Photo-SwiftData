@@ -14,8 +14,13 @@ class CreateEditViewModel {
     
     var name: String = ""
     
-    // 图片相关的属性
+    
+    // 图片二进制数据
     var data: Data?
+    
+    // 相机图片
+    var cameraImage: UIImage?
+    
     // 存储属性，需使用 did set 来监听其变化
     var imageSelection: PhotosPickerItem? {
         didSet {
@@ -28,13 +33,6 @@ class CreateEditViewModel {
         }
     }
     
-    // 图片数据转为二进制
-    @MainActor
-    func loadTransferable(from imageSelection: PhotosPickerItem?) async throws {
-        if let imageData = try await imageSelection?.loadTransferable(type: Data.self) {
-            data = imageData
-        }
-    }
     
     // 方便ui显示；计算属性，无需使用 did set 来监听其变化，每次访问都“现算”
     var image: UIImage {
@@ -42,6 +40,14 @@ class CreateEditViewModel {
             return uiImage
         } else {
             return UIImage()
+        }
+    }
+    
+    // 图片数据转为二进制
+    @MainActor
+    func loadTransferable(from imageSelection: PhotosPickerItem?) async throws {
+        if let imageData = try await imageSelection?.loadTransferable(type: Data.self) {
+            data = imageData
         }
     }
     
