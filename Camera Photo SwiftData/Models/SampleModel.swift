@@ -27,9 +27,10 @@ class SampleModel {
     }
     
     
-    init(name: String, data: Data? = nil) {
+    // 只需要初始化那些没有默认值、不是 Optional、不是计算属性的存储属性
+    // 自定义初始化器，让外部传入一个具体的 name来覆盖默认值
+    init(name: String) {
         self.name = name
-        self.data = data
     }
 }
 
