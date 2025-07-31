@@ -18,10 +18,25 @@ class CreateEditViewModel {
     // 图片二进制数据
     var data: Data?
     
-    // 相机图片
-    var cameraImage: UIImage?
+    // 方便ui显示；计算属性，无需使用 did set 来监听其变化，每次访问都“现算”
+    var image: UIImage {
+        if let data, let uiImage = UIImage(data: data) {
+            return uiImage
+        } else {
+            return UIImage()
+        }
+    }
     
-    // 存储属性，需使用 did set 来监听其变化
+    // 相机图片
+    var cameraImage: UIImage? {
+        didSet {
+            if let cameraImage {
+                data = cameraImage.jpegData(compressionQuality: 0.8)
+            }
+        }
+    }
+    
+    // 图库图片；存储属性，需使用 did set 来监听其变化
     var imageSelection: PhotosPickerItem? {
         didSet {
             if let imageSelection {
@@ -34,16 +49,9 @@ class CreateEditViewModel {
     }
     
     
-    // 方便ui显示；计算属性，无需使用 did set 来监听其变化，每次访问都“现算”
-    var image: UIImage {
-        if let data, let uiImage = UIImage(data: data) {
-            return uiImage
-        } else {
-            return UIImage()
-        }
-    }
     
-    // 图片数据转为二进制
+    
+    // 相册图片转为二进制
     @MainActor
     func loadTransferable(from imageSelection: PhotosPickerItem?) async throws {
         if let imageData = try await imageSelection?.loadTransferable(type: Data.self) {
@@ -51,13 +59,16 @@ class CreateEditViewModel {
         }
     }
     
+    
+    
+    // 001——新建数据
+    init() {}
+    
+    
     // 新建数据的话就没有传入sample
     var sample: SampleModel?
     
-    // 新建数据
-    init() {}
-    
-    // 更新数据
+    // 002——更新数据
     init(sample: SampleModel) {
         self.name = sample.name
         self.data = sample.data

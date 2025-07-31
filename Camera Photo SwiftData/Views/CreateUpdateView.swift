@@ -75,13 +75,6 @@ struct CreateUpdateView: View {
                         .scaledToFit()
                 }
             }
-            // 监测是否拍照
-            .onChange(of: vm.cameraImage) {
-                if let image = vm.cameraImage {
-                    vm.data = image.jpegData(compressionQuality: 0.8)
-                }
-            }
-            
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button("Cancel") {
