@@ -24,14 +24,18 @@ struct CreateUpdateView: View {
     var body: some View {
         NavigationStack {
             Form {
+                
                 TextField("name", text: $vm.name)
                 
-                VStack {
-                    if vm.data != nil {
-                        Button("Clear Image") {
-                            vm.clearImage()
-                        }
+                
+                // 清除图片
+                if vm.data != nil {
+                    Button("Clear Image") {
+                        vm.clearImage()
                     }
+                }
+                
+                VStack {
                     
                     HStack {
                         
@@ -69,12 +73,16 @@ struct CreateUpdateView: View {
                     }
                     .foregroundStyle(.white)
                     .buttonStyle(.borderedProminent)
+                     
                     
+                    // 图片显示
                     Image(uiImage: vm.image)
                         .resizable()
                         .scaledToFit()
                 }
+                
             }
+            
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button("Cancel") {

@@ -54,8 +54,9 @@ class CreateEditViewModel {
     // 相册图片转为二进制
     @MainActor
     func loadTransferable(from imageSelection: PhotosPickerItem?) async throws {
-        if let imageData = try await imageSelection?.loadTransferable(type: Data.self) {
-            data = imageData
+        if let imageData = try await imageSelection?.loadTransferable(type: Data.self),
+           let image = UIImage(data: imageData) {
+            data = image.jpegData(compressionQuality: 0.8)
         }
     }
     
